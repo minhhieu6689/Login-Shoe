@@ -31,15 +31,15 @@ return [
     ],
 
     'facebook' => [
-        'client_id' => '472685073340523',
-        'client_secret' => '66f7133aedb55a619294ddcc38419ee9',
-        'redirect' => 'https://localhost/ShoeShoeBackend/public/facebook/callback',
+        'client_id' => '',
+        'client_secret' => '',
+        'redirect' => '',
     ],
 
     'google' => [
-        'client_id' => '851588212447-9o6vfep0r91fcqilbth1900igife0lnj.apps.googleusercontent.com',
-        'client_secret' => 'Fds69rsIOHHUs16fL-vnDbLz',
-        'redirect' => 'https://localhost/ShoeShoeBackend/public/google/callback',
+        'client_id' => '',
+        'client_secret' => '',
+        'redirect' => '',
     ],
 
 

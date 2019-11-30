@@ -19,6 +19,10 @@ Route::get('/', function () {
     return view('frontend.layout');
 });
 
+Route::get('/cc', function () {
+    return view('frontend.cc');
+});
+
 Auth::routes();
 
 Route::get('/google/redirect', 'SocialAuthFacebookController@redirectGoogle');

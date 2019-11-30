@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\ProductDetail;
+use App\Models\ProductCategory;
 
-class ProductDetailController extends Controller
+class ProductCategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -28,10 +28,10 @@ class ProductDetailController extends Controller
         //
     }
 
-    public function getSize()
+    public function getAllCategory()
     {
-        $sizes = ProductDetail::distinct()->select('size')->orderBy('size')->get();
-        return response()->json($sizes, 200);
+        $categories = ProductCategory::all();
+        return response()->json($categories, 200);
     }
 
 
@@ -54,7 +54,9 @@ class ProductDetailController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id)
-    { }
+    {
+        //
+    }
 
     /**
      * Show the form for editing the specified resource.

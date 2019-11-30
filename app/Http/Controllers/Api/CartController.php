@@ -30,6 +30,15 @@ class CartController extends Controller
         //
     }
 
+    public function mee()
+    {
+        $customer = auth('api')->user();
+        //$customer->setHidden(['apn_token', 'password']);
+
+        return response()->json($customer, 200);
+    }
+
+
     /**
      * Store a newly created resource in storage.
      *
@@ -40,7 +49,7 @@ class CartController extends Controller
     {
         $customer = auth('api')->user();
         if (!$customer) {
-            return response()->json(['success' => false, 'message' => 'Vui lòng đăng nhập để mua hàng']);
+            return response()->json(['success' => false, 'message' => 'Please log in to continue']);
         }
         $id = $customer->id;
         $data = $this->params($request);
@@ -56,7 +65,7 @@ class CartController extends Controller
 
             if ($cart->quantity <= 0) {
                 $cart->delete();
-                return response()->json(['success' => true, 'message' => 'Đã xóa sản phẩm khỏi giỏ hàng thành công'], 200);
+                return response()->json(['success' => true, 'message' => 'Remove item successfully'], 200);
             } else {
                 $cart->save();
             }
@@ -65,7 +74,7 @@ class CartController extends Controller
         }
         $carts = Cart::where('customer_id', $id)->get();
 
-        return response()->json(['success' => true, 'message' => 'Thay đổi giỏ hàng thành công', 'cart' => isset($carts) ? $carts : []], 200);
+        return response()->json(['success' => true, 'message' => 'Update cart successfully', 'cart' => isset($carts) ? $carts : []], 200);
     }
 
     /**
@@ -86,7 +95,8 @@ class CartController extends Controller
             $idProduct = $cart->product_detail->product_id;
             $product = Product::findorFail($idProduct);
             $cart->product_detail->name = $product->name;
-            $cart->product_detail->sub_price = $cart->product_detail->price * $cart->quantity;
+            $cart->product_detail->sub_price = $product->price * $cart->quantity;
+            $cart->price = $product->price;
             $images = ProductImage::where('product_id', $idProduct)->get();
             foreach ($images as $image) {
                 if ($image->color == $cart->product_detail->color) {

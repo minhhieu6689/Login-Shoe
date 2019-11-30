@@ -92,7 +92,7 @@
                         id="ship-2"
                         v-on:click="changeShipping(1)"
                       />
-                      <label for="ship-2">300000 VNĐ</label>
+                      <label for="ship-2">3 {{money}}</label>
                     </div>
                   </div>
                 </div>
@@ -124,22 +124,22 @@
                     <img :src="item.product_detail.image" alt />
                   </div>
                   <h6>{{item.product_detail.name}}</h6>
-                  <p>{{item.product_detail.price}} VNĐ x {{item.quantity}}</p>
-                  <p>{{item.product_detail.sub_price}} VNĐ</p>
+                  <p>{{item.price}} {{money}} x {{item.quantity}}</p>
+                  <p>{{item.product_detail.sub_price}} {{money}}</p>
                 </li>
               </ul>
               <ul class="price-list">
                 <li>
                   Total
-                  <span style="width:155px">{{total_price}} VNĐ</span>
+                  <span style="width:155px">{{total_price}} {{money}}</span>
                 </li>
                 <li>
                   Shipping
-                  <span style="width: 155px;">{{shipping_fee}} VNĐ</span>
+                  <span style="width: 155px;">{{shipping_fee}} {{money}}</span>
                 </li>
                 <li class="total">
                   Total
-                  <span style="width: 155px;">{{total}} VNĐ</span>
+                  <span style="width: 155px;">{{total}} {{money}}</span>
                 </li>
               </ul>
             </div>
@@ -174,6 +174,10 @@ export default {
     total_price() {
       var self = this;
       return self.$store.getters.getTotalPrice;
+    },
+
+    money() {
+      return this.$store.getters.getMoney;
     }
     // cart() {
     //   var self = this;
@@ -182,19 +186,25 @@ export default {
   },
 
   mounted() {
-    var self = this;
-    //
     this.getCart();
-    self.cart = self.$store.state.cart;
-    self.getCurrentCustomer();
-    self.total = self.total_price;
+    this.getCurrentCustomer();
+    this.total = self.total_price;
   },
 
   created() {},
   methods: {
     getCart() {
       var self = this;
-      self.$store.dispatch("getCarts");
+      axios
+        .get("api/v1/cart")
+        .then(function(response) {
+          self.cart = response.data.cart;
+          self.$store.commit("updateCart", self.cart);
+          console.log(self.$store.state.cart);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     },
 
     changeAddress(action) {
@@ -230,7 +240,7 @@ export default {
     changeShipping(action) {
       var self = this;
       if (action == 1) {
-        self.shipping_fee = 30000;
+        self.shipping_fee = 3;
         self.total = self.total_price + self.shipping_fee;
       } else {
         self.total = self.total_price;
@@ -254,7 +264,8 @@ export default {
           total: self.total
         })
         .then(function(response) {
-          var r = confirm("Đặt hàng thành công!");
+          console.log(response);
+          var r = confirm("Order successfully !");
           if (r == true) {
             self.$router.push("/");
           }
@@ -264,5 +275,6 @@ export default {
         });
     }
   }
+  
 };
 </script>

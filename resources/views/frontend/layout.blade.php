@@ -2,12 +2,15 @@
 <html lang="zxx">
 
 <head>
-    <title>Divisima | eCommerce Template</title>
+    <!-- <title>Divisima | eCommerce Template</title> -->
+    <title>Single Page</title>
     <meta charset="UTF-8">
     <meta name="description" content=" Divisima | eCommerce Template">
     <meta name="keywords" content="divisima, eCommerce, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="google-signin-client_id" content="851588212447-9o6vfep0r91fcqilbth1900igife0lnj.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
     <!-- Favicon -->
     <link href="frontend/img/favicon.ico" rel="shortcut icon" />
 
@@ -40,11 +43,7 @@
         <div class="loader"></div>
     </div>
 
-
-
-
     <div id="app">
-
         <!-- Header section -->
         <header class="header-section">
             <div class="header-top">
@@ -53,14 +52,8 @@
                         <div class="col-lg-2 text-center text-lg-left">
                             <!-- logo -->
                             <router-link to="/"><img src="frontend/img/logo.png" alt=""></router-link>
-
                         </div>
-                        <div class="col-xl-6 col-lg-5">
-                            <form class="header-search-form">
-                                <input type="text" placeholder="Search on divisima ....">
-                                <button><i class="flaticon-search"></i></button>
-                            </form>
-                        </div>
+                        <search></search>
                         <div class="col-xl-4 col-lg-5">
                             <div class="user-panel">
                                 <login-icon></login-icon>
@@ -74,20 +67,16 @@
                 <div class="container">
                     <!-- menu -->
                     <ul class="main-menu">
-                        <li><a href="#">Home</a></li>
+                        <li>
+                            <router-link to="/">Home</router-link>
+                        </li>
                         <li><a href="#">Women</a></li>
                         <li><a href="#">Men</a></li>
                         <li><a href="#">Jewelry
                                 <span class="new">New</span>
                             </a></li>
-                        <li><a href="#">Shoes</a>
-                            <ul class="sub-menu">
-                                <li><a href="#">Sneakers</a></li>
-                                <li><a href="#">Sandals</a></li>
-                                <li><a href="#">Formal Shoes</a></li>
-                                <li><a href="#">Boots</a></li>
-                                <li><a href="#">Flip Flops</a></li>
-                            </ul>
+                        <li>
+                            <router-link to="/products">Products</router-link>
                         </li>
                         <li><a href="#">Pages</a>
                             <ul class="sub-menu">
@@ -106,13 +95,7 @@
 
         <!-- Header section end -->
         <router-view></router-view>
-        <a href="/">Home</a>
-        <router-link to="/hello">Hello</router-link>
-        <router-link to="/products">Products</router-link>
-        <router-link to="/product/10">Product</router-link>
-        <router-link to="/product/12">Product</router-link>
     </div>
-
 
     <!-- Footer section -->
     <section class="footer-section">
@@ -217,8 +200,6 @@
     </section>
     <!-- Footer section end -->
 
-
-
     <!--====== Javascripts & Jquery ======-->
     <script src="{{ mix('js/app.js') }}"></script>
     <script src="{{ asset('/frontend/js/jquery-3.2.1.min.js') }}"></script>
@@ -229,10 +210,6 @@
     <script src="{{ asset('/frontend/js/jquery.zoom.min.js') }}"></script>
     <script src="{{ asset('/frontend/js/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('/frontend/js/main.js') }}"></script>
-
-
-
-
 
 </body>
 

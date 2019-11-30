@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+
 use App\SocialFacebookAccount;
-use App\User;
+use App\Models\Customer;
 use Socialite;
-use Auth;
+use Hash;
+use Illuminate\Support\Facades\Auth;
 
 class SocialAuthFacebookController extends Controller
 {
@@ -34,18 +36,18 @@ class SocialAuthFacebookController extends Controller
      */
     public function callbackGoogle()
     {
-        
         $providerUser = Socialite::driver('google')->stateless()->user();
-        
+
         $account = SocialFacebookAccount::whereProvider('google')
             ->whereProviderUserId($providerUser->getId())
             ->first();
-        
+
         if ($account) {
-
-            Auth::login($account->user);
-            return redirect()->to('/home');
-
+            if ($token = auth('api')->login($account->customer)) {
+                $customer = auth('api')->user();
+                $cookie = cookie('token', $token, 3600);
+                return redirect()->to('/')->cookie($cookie);
+            }
         } else {
 
             $account = new SocialFacebookAccount([
@@ -53,39 +55,41 @@ class SocialAuthFacebookController extends Controller
                 'provider' => 'google'
             ]);
 
-            $user = User::whereEmail($providerUser->getEmail())->first();
+            $customer = Customer::whereEmail($providerUser->getEmail())->first();
 
-            if (!$user) {
+            if (!$customer) {
 
-                $user = User::create([
+                $customer = Customer::create([
                     'email' => $providerUser->getEmail(),
                     'name' => $providerUser->getName(),
                     'password' => md5(rand(1, 10000)),
                 ]);
             }
 
-            $account->user()->associate($user);
+            $account->customer()->associate($customer);
             $account->save();
 
-            Auth::login($user);
-            return redirect()->to('/home');
+            if ($token = auth('api')->login($account->customer)) {
+                dd($token);
+                $cookie = cookie('token', $token, 3600);
+                return redirect()->to('/')->cookie($cookie);
+            }
         }
     }
 
     public function callbackFacebook()
     {
         $providerUser = Socialite::driver('facebook')->user();
-        
+
         $account = SocialFacebookAccount::whereProvider('facebook')
             ->whereProviderUserId($providerUser->getId())
             ->first();
-        
+
 
         if ($account) {
 
             Auth::login($account->user);
             return redirect()->to('/home');
-
         } else {
 
             $account = new SocialFacebookAccount([

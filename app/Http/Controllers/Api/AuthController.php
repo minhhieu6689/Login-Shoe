@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use JWTAuth;
 use Socialite;
 use Hash;
+use App\SocialFacebookAccount;
 use Illuminate\Support\Facades\Cookie;
 
 class AuthController extends Controller
@@ -35,63 +36,70 @@ class AuthController extends Controller
         return response()->json($customer, 200);
     }
 
-    // public function facebook(Request $request){
-    //     try {
-    //         $customerSocial = Socialite::driver('facebook')->customerFromToken($request->access_token);
+    public function facebook(Request $request)
+    {
+        try {
+            $customerSocial = Socialite::driver('facebook')->customerFromToken($request->access_token);
 
-    //         return $this->socialLogin($customerSocial);
-    //     }
-    //     catch(\Exception $ex) {
-    //         return response()->json(['success' => false, 'message' => $ex->getMessage()], 422);
-    //     }
+            return $this->socialLogin($customerSocial);
+        } catch (\Exception $ex) {
+            return response()->json(['success' => false, 'message' => $ex->getMessage()], 422);
+        }
+    }
+    public function google(Request $request)
+    {
 
-    // }
-    // public function google(Request $request){
+        try {
+            $customerSocial = SocialFacebookAccount::whereProvider('google')
+                ->whereProviderUserId($request->customer_id)
+                ->first();
+            return $this->socialLogin($customerSocial);
+        } catch (\GuzzleHttp\Exception\ClientException $ex) {
 
-    //     try {
-    //         $customerSocial = Socialite::driver('google')->customerFromToken($request->access_token);
-    //         // $customerSocial = Socialite::driver('google')->getAccessTokenResponse($request->access_token);
-    //         // dd($customerSocial);
-    //         return $this->socialLogin($customerSocial);
-    //     }
-    //     catch(\GuzzleHttp\Exception\ClientException $ex) {
+            $content = file_get_contents("https://oauth2.googleapis.com/tokeninfo?id_token=" . $request->access_token);
+            $customerSocial = json_decode($content);
 
-    //         $content = file_get_contents("https://oauth2.googleapis.com/tokeninfo?id_token=" . $request->access_token);
-    //         $customerSocial = json_decode($content);
+            if ($customerSocial->aud == env('GOOGLE_MOBILE_KEY')) {
+                return $this->socialLogin($customerSocial);
+            }
+        } catch (\Exception $ex) {
+            return response()->json(['success' => false, 'message' => $ex->getMessage()], 422);
+        }
+    }
+    public function googleLogin(Request $request)
+    {
+        $customerSocial = SocialFacebookAccount::whereProvider('google')
+            ->whereProviderUserId($request->customer_id)
+            ->first();
+        
+        if ($customerSocial) {
+            $customer = customer::where('id', $customerSocial->customer_id)->first();
+        } else {
+            $customer = customer::create([
+                'email' => $request->email,
+                'password' =>  md5(rand(1, 10000)),
+                'name' => $request->name,
+                'phone' => '',
+            ]);
+        }
 
-    //         if($customerSocial->aud == env('GOOGLE_MOBILE_KEY')) {
-    //             return $this->socialLogin($customerSocial);
-    //         }
+        try {
+            if (!$token = auth('api')->login($customer)) {
+                return response()->json(["success" => false, "message" => 'invalid_email_or_password'], 422);
+            }
+        } catch (JWTAuthException $e) {
+            return response()->json(["success" => false, "message" => 'failed_to_create_token'], 500);
+        }
 
-    //     }
-    //     catch(\Exception $ex) {
-    //         return response()->json(['success' => false, 'message' => $ex->getMessage()], 422);
-    //     }
-    // }
-    // private function socialLogin($customerSocial) {
-    //     if($customerSocial) {
-    //         $customer = customer::where('email', $customerSocial->email)->first();
-    //         if(!$customer) {
-    //             $customer = customer::create([
-    //                 'email' => $customerSocial->email,
-    //                 'password' => '',
-    //                 'name' => $customerSocial->name,
-    //                 'phone' => '',
-    //             ]);
-    //         }
+        $customer = auth('api')->user();
+        $customer->setHidden(['password']);
 
-    //         try {
-    //             if (!$token = auth('api')->login($customer)) {
-    //              return response()->json([ "success" => false, "message" => 'invalid_email_or_password'], 422);
-    //             }
-    //          } catch (JWTAuthException $e) {
-    //              return response()->json(["success" => false, "message" => 'failed_to_create_token'], 500);
-    //          }
-    //          $customer->setHidden(['apn_token', 'password']);
-    //          return response()->json(compact('token', 'customer'));
-    //     }
-    //     return response()->json(["success" => false, "message" => 'failed_to_create_token'], 500);
-    // }
+        $cookie = cookie('token', $token, 3600);
+
+        return response()->json(compact('token', 'customer'))->cookie($cookie);
+        return response()->json(["success" => false, "message" => 'failed_to_create_token'], 500);
+    }
+
     public function login(Request $request)
     {
 
@@ -135,8 +143,12 @@ class AuthController extends Controller
                     if (!$token = auth('api')->login($customer)) {
                         return response()->json(["success" => false, "message" => 'invalid_email_or_password'], 422);
                     }
-                    $customer->setHidden(['apn_token', 'password']);
-                    return response()->json(compact('token', 'customer'));
+                    $customer = auth('api')->user();
+                    $customer->setHidden(['password']);
+
+                    $cookie = cookie('token', $token, 3600);
+
+                    return response()->json(compact('token', 'customer'))->cookie($cookie);
                 } catch (JWTAuthException $e) {
                     return response()->json(["success" => false, "message" => 'failed_to_create_token'], 500);
                 }

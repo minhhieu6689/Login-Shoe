@@ -27,6 +27,8 @@ Route::group([
 
     Route::post('cart', 'API\CartController@store');
 
+    Route::get('mee', 'API\CartController@mee');
+
     Route::get('cart', 'API\CartController@showCurrentCart');
 
     Route::get('customer', 'API\CustomerController@showCurrent');
@@ -39,6 +41,8 @@ Route::group([
 
     Route::post('login', 'API\AuthController@login');
 
+    Route::post('googleLogin', 'API\AuthController@googleLogin');
+
     Route::get('me', 'API\AuthController@me');
 
     Route::get('logout', 'API\AuthController@logout');
@@ -46,4 +50,10 @@ Route::group([
     Route::get('setCookie', 'API\CustomerController@setCookie');
 
     Route::get('getCookie', 'API\CustomerController@getCookie');
+
+    Route::get('search', 'API\ProductController@search');
+
+    Route::get('category', 'API\ProductCategoryController@getAllCategory');
+
+    Route::get('size', 'API\ProductDetailController@getSize');
 });

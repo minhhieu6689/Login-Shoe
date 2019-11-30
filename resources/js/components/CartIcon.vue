@@ -13,7 +13,7 @@ export default {
   computed: {
     cart_length() {
       var self = this;
-      const length = self.$store.state.cart_length;
+      const length = self.$store.getters.getLengthCart;
       return length;
     }
   },

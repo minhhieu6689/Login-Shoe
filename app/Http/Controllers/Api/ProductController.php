@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\ProductDetail;
 
 class ProductController extends Controller
 {
@@ -51,6 +52,39 @@ class ProductController extends Controller
     {
         $products = Product::with('product_details')->with('product_images')->findOrFail($id);
         return response()->json($products, 200);
+    }
+
+    public function search(Request $request)
+    {
+        $result = Product::with('product_details')->with('product_images')->with('product_category');
+
+        if (!empty($request->search_string)) {
+            $result = $result->where('name', 'like', '%' . $request->search_string . '%');
+        }
+
+        if (!empty($request->category)) {
+            $category = $request->category;
+            $result = $result->whereHas('product_category', function ($q) use ($category) {
+                $q->where('id', $category);
+            });
+        }
+
+        if (!empty($request->min_price) && !empty($request->max_price)) {
+            $result = $result->whereBetween('price', [$request->min_price, $request->max_price]);
+        }
+
+        if (!empty($request->size)) {
+            $itemDetail = ProductDetail::where('size', $request->size)->get()->map(function ($item) {
+                return $item->product_id;
+            })->toArray();
+            $result = $result->where(function ($query) use ($itemDetail) {
+                $query->whereIn('id', $itemDetail);
+            });
+        }
+
+        $result = $result->get();
+
+        return response()->json($result, 200);
     }
 
     /**

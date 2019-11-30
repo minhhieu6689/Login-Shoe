@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\ProductDetail;
 use App\Models\OrderItem;
 use App\Models\Cart;
 use Validator;
@@ -91,6 +92,21 @@ class OrderController extends Controller
                     'product_id' => $cart->product_id,
                     'quantity' => $cart->quantity,
                 ]);
+
+                $product = ProductDetail::where('id',$cart->product_id)->first();
+
+                if($product != null){
+                    $remainItem = $product->quantity - $cart->quantity;
+                    if($remainItem < 0){
+                        return response()->json(['success' => false, 'message' => 'Fail to order. Out of stock '], 500);
+                    }
+                    $product->quantity = $remainItem;
+                    $product->save();
+                }
+                else{
+                    return response()->json(['success' => false, 'message' => 'Fail to order. Out of stock '], 500);
+                }
+                
             }
 
             Cart::where('customer_id', $idCustomer)->delete();

@@ -3,10 +3,12 @@
     <!-- <i class="flaticon-profile"></i> -->
     <div v-if="customer">
       <label>{{ customer }}</label>
-      <a href v-on:click="LogOut()">Log out</a>
+      <a href v-on:click="LogOut()">
+        <i class="fa fa-sign-out" aria-hidden="true"></i>
+      </a>
     </div>
     <div v-else>
-      <router-link to="/login">Sign in</router-link>or
+      <router-link to="/login">Sign in</router-link> or
       <router-link to="/register">Create Account</router-link>
     </div>
   </div>

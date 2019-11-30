@@ -9,7 +9,15 @@ export default new Vuex.Store({
         cart_length: 0,
         total_price: 0,
         token: "",
-        customer_name: ""
+        customer_name: "",
+        money: "$",
+        search_product: [],
+        componentKey: 0,
+        search_string:"",
+        id_category:"",
+        min_price: 0,
+        max_price:0,
+        size:0
     },
     getters: {
         getCart(state) {
@@ -17,7 +25,6 @@ export default new Vuex.Store({
                 .get("api/v1/cart")
                 .then(function(response) {
                     state.cart = response.data.cart;
-                    console.log(state.cart);
                     return state.cart;
                 })
                 .catch(function(error) {
@@ -38,7 +45,40 @@ export default new Vuex.Store({
                 state.cart_length += item.quantity;
             }
             return state.cart_length;
+        },
+
+        getMoney(state) {
+            return state.money;
+        },
+
+        getSearchProduct(state) {
+            return state.search_product;
+        },
+
+        getStringSearch(state){
+            return state.search_string;
+        },
+
+
+        getCategorySearch(state){
+            return state.id_category;
+        },
+
+        getMinPriceSearch(state){
+            return state.min_price;
+        },
+
+        getMaxPriceSearch(state){
+            return state.max_price;
+        },
+
+        getSizeSearch(state){
+            return state.size;
         }
+
+        
+
+        
     },
     mutations: {
         changeLength(state, amount) {
@@ -47,11 +87,9 @@ export default new Vuex.Store({
 
         updateCart(state, item) {
             state.cart = item;
-            console.log(state.cart);
         },
         updateToken(state, item) {
             state.token = item;
-            console.log(state.token);
         },
         getCurrentCustomer(state) {
             const token = self.$store.state.token;
@@ -60,14 +98,41 @@ export default new Vuex.Store({
                     headers: { Authorization: `Bearer ${token}` }
                 })
                 .then(function(response) {
-                    console.log(response);
                     state.customer_name = response.data.name;
-                    console.log(state.customer_name);
                 })
                 .catch(function(error) {
                     console.log(error);
                 });
-        }
+        },
+        
+        updateSearchProduct(state, item) {
+            state.search_product = item;
+        },
+
+        updatecomponentKey(state, item) {
+            state.componentKey = item;
+        },
+
+        updateStringSearch(state,item){
+            state.search_string = item;
+        },
+
+        updateCategorySearch(state,item){
+            state.id_category = item;
+        },
+
+        updateMinPriceSearch(state,item){
+            state.min_price = item;
+        },
+
+        updateMaxPriceSearch(state,item){
+            state.max_price = item;
+        },
+
+        updateSizeSearch(state,item){
+            state.size = item;
+        },
+
     },
     actions: {
         getCarts(context) {

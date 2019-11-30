@@ -10,7 +10,7 @@
               <p
                 style="color:white"
               >There are advances being made in science and technology everyday, and a good example of this is the</p>
-              <a class="primary-btn" href="registration.html">Create an Account</a>
+              <router-link to="/register" class="primary-btn">Create an Account </router-link>
             </div>
           </div>
         </div>
@@ -65,10 +65,34 @@
                 />
               </div>
               <div class="col-md-12 form-group">
-                <button type="button" value="submit" class="primary-btn" v-on:click="Login()">Log In</button>
-                <a href="#">Forgot Password?</a>
+                <button
+                  type="button"
+                  value="submit"
+                  class="primary-btn"
+                  v-on:click="Login()"
+                >SIGN IN</button>
+                <div style="margin-top: 20px">
+                  <a href="#">Forgot Password?</a>
+                  <label>Or Sign in with</label>
+                </div>
               </div>
+              <!-- <div class="col-md-6 form-group">
+                <button type="button" value="submit" class="btn btn-primary" v-on:click="Log()">
+                  <i style="padding-right:20px" class="fa fa-facebook-official" aria-hidden="true"></i>FACEBOOK
+                </button>
+              </div>
+              <div class="col-md-6 form-group">
+                <button type="button" value="submit" class="btn btn-danger">
+                  <i style="padding-right:20px" class="fa fa-google" aria-hidden="true"></i>GOOGLE
+                </button>
+              </div> -->
             </form>
+            <!-- <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div> -->
+            <g-signin-button
+              :params="googleSignInParams"
+              @success="onSignInSuccess"
+              @error="onSignInError"
+            >Sign in with Google</g-signin-button>
           </div>
         </div>
       </div>
@@ -77,6 +101,9 @@
 </template>
 
 <script>
+import Vue from "vue";
+import GSignInButton from "vue-google-signin-button";
+Vue.use(GSignInButton);
 export default {
   computed: {},
   data: function() {
@@ -84,7 +111,11 @@ export default {
       email: "",
       password: "",
       is_hidden: true,
-      message: ""
+      message: "",
+      googleSignInParams: {
+        client_id:
+          "851588212447-9o6vfep0r91fcqilbth1900igife0lnj.apps.googleusercontent.com"
+      }
     };
   },
 
@@ -92,6 +123,20 @@ export default {
 
   created() {},
   methods: {
+    onSignInSuccess(googleUser) {
+      const profile = googleUser.getBasicProfile(); // etc etc
+      console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+      console.log("Full Name: " + profile.getName());
+      console.log("Given Name: " + profile.getGivenName());
+      console.log("Family Name: " + profile.getFamilyName());
+      console.log("Image URL: " + profile.getImageUrl());
+      console.log("Email: " + profile.getEmail());
+      this.loginGoogle(profile.getId(),profile.getEmail(),profile.getName());
+    },
+    onSignInError(error) {
+      // `error` contains any error occurred.
+      console.log("OH NOES", error);
+    },
     Login() {
       var self = this;
       axios
@@ -102,7 +147,7 @@ export default {
         .then(function(response) {
           console.log(response);
           self.$store.commit("updateToken", response.data.token);
-          var r = confirm("Đăng nhập thành công!");
+          var r = confirm("Log in successfully!");
           if (r == true) {
             self.$router.push("/");
           }
@@ -110,12 +155,45 @@ export default {
         .catch(function(error) {
           console.log(error);
           self.is_hidden = false;
-          self.message = "Sai tên tài khoản hoặc mật khẩu";
+          self.message = "Invalid email or password";
         });
     },
+
     closeAlert() {
       this.is_hidden = true;
+    },
+
+    loginGoogle(id,email,name) {
+      var self = this;
+      axios
+        .post("api/v1/googleLogin", {
+          customer_id: id,
+          email: email,
+          name: name,
+        })
+        .then(function(response) {
+          console.log(response);
+          self.$store.commit("updateToken", response.data.token);
+          var r = confirm("Login successfully!");
+          if (r == true) {
+            self.$router.push("/");
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     }
   }
 };
 </script>
+<style>
+.g-signin-button {
+  /* This is where you control how the button looks. Be creative! */
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 3px;
+  background-color: #3c82f7;
+  color: #fff;
+  box-shadow: 0 3px 0 #0f69ff;
+}
+</style>

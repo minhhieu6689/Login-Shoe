@@ -50,7 +50,7 @@
                         <img :src="item.product_detail.image" alt />
                         <div class="pc-title">
                           <h4>{{item.product_detail.name}}</h4>
-                          <p>{{item.product_detail.price}}</p>
+                          <p>{{item.price}} {{money}}</p>
                         </div>
                       </td>
                       <td class="quy-col">
@@ -76,7 +76,7 @@
                         <h4>{{item.product_detail.size}}</h4>
                       </td>
                       <td class="total-col">
-                        <h4>{{item.product_detail.sub_price}}</h4>
+                        <h4>{{item.product_detail.sub_price}} {{money}}</h4>
                       </td>
                     </tr>
                   </tbody>
@@ -85,7 +85,7 @@
               <div class="total-cost">
                 <h6>
                   Total
-                  <span>{{ total_price }}</span>
+                  <span>{{ total_price }} {{money}}</span>
                 </h6>
               </div>
             </div>
@@ -128,6 +128,12 @@ export default {
     };
   },
 
+  computed: {
+    money() {
+      return this.$store.getters.getMoney;
+    }
+  },
+
   mounted() {
     var self = this;
     this.getCart();
@@ -159,6 +165,7 @@ export default {
           }
           self.is_hidden = false;
           self.message = response.data.message;
+          self.$store.commit("updateCart", self.cart);
         })
         .catch(function(error) {
           console.log(error);
@@ -187,7 +194,7 @@ export default {
         self.total_price += item.product_detail.sub_price;
         self.length += item.quantity;
       }
-      self.$store.commit("changeLength", self.length);
+      //self.$store.commit("changeLength", self.length);
     },
     closeAlert() {
       this.is_hidden = true;

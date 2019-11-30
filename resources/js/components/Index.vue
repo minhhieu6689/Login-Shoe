@@ -78,7 +78,7 @@
     <!-- Features section end -->
 
     <!-- letest product section -->
-    <section class="top-letest-product-section">
+    <!-- <section class="top-letest-product-section">
       <div class="container">
         <div class="section-title">
           <h2>LATEST PRODUCTS</h2>
@@ -177,16 +177,16 @@
           </div>
         </div>
       </div>
-    </section>
+    </section> -->
     <!-- letest product section end -->
 
     <!-- Product filter section -->
     <section class="product-filter-section">
       <div class="container">
-        <div class="section-title">
+        <div class="section-title" style="margin-top:40px">
           <h2>BROWSE TOP SELLING PRODUCTS</h2>
         </div>
-        <ul class="product-filter-menu">
+        <!-- <ul class="product-filter-menu">
           <li>
             <a href="#">TOPS</a>
           </li>
@@ -211,7 +211,7 @@
           <li>
             <a href="#">LEGGINGS</a>
           </li>
-        </ul>
+        </ul> -->
         <div class="row">
           <div class="col-lg-3 col-sm-6">
             <div class="product-item">
@@ -401,9 +401,8 @@
 import Vue from "vue";
 //import Carousel from "./Carousel";
 import VueCarousel from "@chenfengyuan/vue-carousel";
-
 Vue.component(VueCarousel.name, VueCarousel);
-//Vue.component("carosel", Carousel);
+//Vue.component("carousel", Carousel);
 
 export default {
   data: function() {
@@ -419,10 +418,11 @@ export default {
       ]
     };
   },
+  computed: {},
 
   mounted() {
     var self = this;
-    //this.getCart();
+    self.getCart();
   },
 
   created() {},
@@ -433,26 +433,13 @@ export default {
         .get("api/v1/cart")
         .then(function(response) {
           self.cart = response.data.cart;
-          console.log(self.cart);
-          self.getTotalPrice();
           self.$store.commit("updateCart", self.cart);
-          console.log(self.$store.state.cart);
         })
         .catch(function(error) {
           console.log(error);
         });
     },
-
-    getTotalPrice() {
-      var self = this;
-      self.total_price = 0;
-      self.length = 0;
-      for (const item of self.cart) {
-        self.total_price += item.product_detail.sub_price;
-        self.length += item.quantity;
-      }
-      self.$store.commit("changeLength", self.length);
-    }
+    
   }
 };
 </script>

@@ -1,5 +1,4 @@
 require("./bootstrap");
-//window.Vue = require('vue');
 
 import Vue from "vue";
 import VueRouter from "vue-router";
@@ -14,6 +13,7 @@ import LoginIcon from "./components/LoginIcon";
 import CheckOut from "./components/CheckOut";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import Search from "./components/Search";
 
 Vue.use(VueRouter);
 
@@ -21,16 +21,27 @@ const routes = [
     { path: "/", component: Index },
     { path: "/hello", component: HelloWorld },
     { path: "/product/:productId", name: "product", component: Product },
-    { path: "/products", component: Products },
+    {
+        path: "/products",
+        name: "products",
+        component: Products,
+        props: route => ({
+            keyword: route.query.keyword,
+            category: route.query.category,
+            min_price: route.query.min_price,
+            max_price: route.query.max_price,
+            size: route.query.size
+        })
+    },
     { path: "/cart", component: Cart },
     { path: "/checkout", component: CheckOut },
     { path: "/login", component: Login },
-    { path: "/register", component: Register },
+    { path: "/register", component: Register }
 ];
 
 const router = new VueRouter({
     routes
-    // mode: "history"
+    //mode: "history"
 });
 
 const app = new Vue({
@@ -40,5 +51,6 @@ const app = new Vue({
     components: {
         "cart-icon": CartIcon,
         "login-icon": LoginIcon,
+        search: Search
     }
 });

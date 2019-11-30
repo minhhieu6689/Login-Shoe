@@ -17,114 +17,9 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-3 order-2 order-lg-1">
-            <div class="filter-widget">
-              <h2 class="fw-title">Categories</h2>
-              <ul class="category-menu">
-                <li>
-                  <a href="#">Woman wear</a>
-                  <ul class="sub-menu">
-                    <li>
-                      <a href="#">
-                        Midi Dresses
-                        <span>(2)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Maxi Dresses
-                        <span>(56)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Prom Dresses
-                        <span>(36)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Little Black Dresses
-                        <span>(27)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Mini Dresses
-                        <span>(19)</span>
-                      </a>
-                    </li>
-                  </ul>
-                </li>
-                <li>
-                  <a href="#">Man Wear</a>
-                  <ul class="sub-menu">
-                    <li>
-                      <a href="#">
-                        Midi Dresses
-                        <span>(2)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Maxi Dresses
-                        <span>(56)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Prom Dresses
-                        <span>(36)</span>
-                      </a>
-                    </li>
-                  </ul>
-                </li>
-                <li>
-                  <a href="#">Children</a>
-                </li>
-                <li>
-                  <a href="#">Bags & Purses</a>
-                </li>
-                <li>
-                  <a href="#">Eyewear</a>
-                </li>
-                <li>
-                  <a href="#">Footwear</a>
-                </li>
-              </ul>
-            </div>
-            <div class="filter-widget mb-0">
-              <h2 class="fw-title">refine by</h2>
-              <div class="price-range-wrap">
-                <h4>Price</h4>
-                <div
-                  class="price-range ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"
-                  data-min="10"
-                  data-max="270"
-                >
-                  <div
-                    class="ui-slider-range ui-corner-all ui-widget-header"
-                    style="left: 0%; width: 100%;"
-                  ></div>
-                  <span
-                    tabindex="0"
-                    class="ui-slider-handle ui-corner-all ui-state-default"
-                    style="left: 0%;"
-                  ></span>
-                  <span
-                    tabindex="0"
-                    class="ui-slider-handle ui-corner-all ui-state-default"
-                    style="left: 100%;"
-                  ></span>
-                </div>
-                <div class="range-slider">
-                  <div class="price-input">
-                    <input type="text" id="minamount" />
-                    <input type="text" id="maxamount" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="filter-widget mb-0">
+            <category></category>
+            <price></price>
+            <!-- <div class="filter-widget mb-0">
               <h2 class="fw-title">color by</h2>
               <div class="fw-color-choose">
                 <div class="cs-item">
@@ -164,37 +59,9 @@
                   </label>
                 </div>
               </div>
-            </div>
-            <div class="filter-widget mb-0">
-              <h2 class="fw-title">Size</h2>
-              <div class="fw-size-choose">
-                <div class="sc-item">
-                  <input type="radio" name="sc" id="xs-size" />
-                  <label for="xs-size">XS</label>
-                </div>
-                <div class="sc-item">
-                  <input type="radio" name="sc" id="s-size" />
-                  <label for="s-size">S</label>
-                </div>
-                <div class="sc-item">
-                  <input type="radio" name="sc" id="m-size" checked />
-                  <label for="m-size">M</label>
-                </div>
-                <div class="sc-item">
-                  <input type="radio" name="sc" id="l-size" />
-                  <label for="l-size">L</label>
-                </div>
-                <div class="sc-item">
-                  <input type="radio" name="sc" id="xl-size" />
-                  <label for="xl-size">XL</label>
-                </div>
-                <div class="sc-item">
-                  <input type="radio" name="sc" id="xxl-size" />
-                  <label for="xxl-size">XXL</label>
-                </div>
-              </div>
-            </div>
-            <div class="filter-widget">
+            </div>-->
+            <size></size>
+            <!-- <div class="filter-widget">
               <h2 class="fw-title">Brand</h2>
               <ul class="category-menu">
                 <li>
@@ -228,7 +95,7 @@
                   </a>
                 </li>
               </ul>
-            </div>
+            </div>-->
           </div>
 
           <div class="col-lg-9 order-1 order-lg-2 mb-5 mb-lg-0">
@@ -239,9 +106,9 @@
                     <div class="tag-sale">ON SALE</div>
                     <!-- <router-link to="/product/10">Product</router-link> -->
                     <router-link :to="{ name: 'product', params: { productId: product.id }}">
-                      <img :src="product.product_images[0].image" alt />
+                      <img :src="product.product_images[0].image" alt class="standard-img" />
                     </router-link>
-                    <div class="pi-links">
+                    <!-- <div class="pi-links">
                       <a href="#" class="add-card">
                         <i class="flaticon-bag"></i>
                         <span>ADD TO CART</span>
@@ -249,10 +116,10 @@
                       <a href="#" class="wishlist-btn">
                         <i class="flaticon-heart"></i>
                       </a>
-                    </div>
+                    </div>-->
                   </div>
                   <div class="pi-text">
-                    <h6>{{ product.product_details[0].price }} VNĐ</h6>
+                    <h6>{{ product.price }} {{money}}</h6>
                     <p>{{ product.name }}</p>
                   </div>
                 </div>
@@ -271,34 +138,67 @@
 </template>
 
 <script>
+import Vue from "vue";
+import Category from "./Category";
+import Price from "./Price";
+import Size from "./Size";
+Vue.component("category", Category);
+Vue.component("price", Price);
+Vue.component("size", Size);
 export default {
+  props: {
+    keyword: {
+      type: String,
+      default: null
+    },
+    category: {
+      type: String,
+      default: null
+    },
+    min_price: {
+      type: String,
+      default: null
+    },
+    max_price: {
+      type: String,
+      default: null
+    },
+    size: {
+      type: String,
+      default: null
+    },
+  },
   data: function() {
     return {
-      products: [],
+      //products: [],
       first_image: "",
       first_price: "",
       productdata: {}
     };
   },
+  computed: {
+    money() {
+      return this.$store.getters.getMoney;
+    },
+    products() {
+      return this.$store.getters.getSearchProduct;
+    }
+  },
 
   mounted() {
     var self = this;
-    console.log(self.$store.state.cart);
-    axios
-      .get("api/v1/products")
-      .then(function(res) {
-        // self.products.push(res.data);
-        // console.log(self.products[0].data);
-        self.productdata = res.data;
-        console.log(self.productdata);
-        self.products = self.productdata.data;
-        console.log(self.products);
-        self.first_image = self.products[0].product_images[0].image;
-        console.log(self.first_image);
-        self.first_price = self.products[1].product_details[0].price;
-        console.log(self.first_price);
-      })
-      .catch(function(res) {});
+    self.getCart();
+    // if (this.$route.params.keyword == "all") {
+    //   axios
+    //     .get("api/v1/search")
+    //     .then(function(response) {
+    //       console.log(response);
+    //       self.$store.commit("updateSearchProduct", response.data);
+    //     })
+    //     .catch(function(error) {
+    //       console.log(error);
+    //     });
+    // }
   },
 
   created() {},
@@ -306,6 +206,40 @@ export default {
   methods: {
     goHome() {
       this.$router.push("/");
+    },
+    getCart() {
+      var self = this;
+      axios
+        .get("api/v1/cart")
+        .then(function(response) {
+          self.cart = response.data.cart;
+          self.$store.commit("updateCart", self.cart);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+    getSearch() {
+      var self = this;
+      axios
+        .get("api/v1/search")
+        .then(function(response) {
+          console.log(response);
+          self.$store.commit("updateSearchProduct", response.data);
+          if (self.$route.name != "products") {
+            self.$router.push({
+              name: "products",
+              params: { keyword: "all" }
+            });
+          } else {
+            self.$router.push({
+              params: { keyword: "all" }
+            });
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     }
   }
 };

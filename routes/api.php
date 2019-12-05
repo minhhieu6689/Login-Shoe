@@ -23,6 +23,8 @@ Route::group([
 
     Route::get('products', 'API\ProductController@index');
 
+    Route::get('feature', 'API\ProductController@feature');
+
     Route::get('products/{id}', 'API\ProductController@show');
 
     Route::post('cart', 'API\CartController@store');

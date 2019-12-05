@@ -69,18 +69,27 @@ class AuthController extends Controller
     public function googleLogin(Request $request)
     {
         $customerSocial = SocialFacebookAccount::whereProvider('google')
-            ->whereProviderUserId($request->customer_id)
+            ->whereProviderUserId($request->id)
             ->first();
         
         if ($customerSocial) {
             $customer = customer::where('id', $customerSocial->customer_id)->first();
         } else {
+            
+            $account = new SocialFacebookAccount([
+                'provider_user_id' => $request->id,
+                'provider' => 'google'
+            ]);
+
             $customer = customer::create([
                 'email' => $request->email,
                 'password' =>  md5(rand(1, 10000)),
                 'name' => $request->name,
                 'phone' => '',
             ]);
+
+            $account->customer()->associate($customer);
+            $account->save();
         }
 
         try {

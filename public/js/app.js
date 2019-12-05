@@ -2813,7 +2813,7 @@ __webpack_require__.r(__webpack_exports__);
     updatProduct: function updatProduct(index, action) {
       var self = this;
       action === 1 ? self.cart[index].quantity++ : self.cart[index].quantity--;
-      self.cart[index].product_detail.sub_price = self.cart[index].quantity * self.cart[index].product_detail.price;
+      self.cart[index].product_detail.sub_price = self.cart[index].quantity * self.cart[index].price;
       var token = self.$store.state.token;
       axios.post("api/v1/cart", {
         //headers: { Authorization: `Bearer ${token}` },
@@ -2879,6 +2879,19 @@ __webpack_require__.r(__webpack_exports__);
     },
     closeAlert: function closeAlert() {
       this.is_hidden = true;
+    },
+    redirectToCheckOut: function redirectToCheckOut() {
+      this.getCart();
+
+      if (this.cart.length != 0) {
+        this.$router.push("checkout");
+      } else {
+        var r = confirm("There is no item in your cart. Click ok to back to home page and buy items!");
+
+        if (r == true) {
+          this.$router.push("/");
+        }
+      }
     }
   }
 });
@@ -2985,7 +2998,6 @@ __webpack_require__.r(__webpack_exports__);
       var self = this;
       self.is_hidden_category = false;
       self.category_name = name;
-      var search_string = self.$store.getters.getSearchString;
       axios.get("api/v1/search", {
         params: {
           search_string: self.$store.getters.getSearchString,
@@ -3238,7 +3250,7 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     this.getCart();
     this.getCurrentCustomer();
-    this.total = self.total_price;
+    this.total = this.$store.getters.getTotalPrice;
   },
   created: function created() {},
   methods: {
@@ -3640,144 +3652,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
  //import Carousel from "./Carousel";
 
 
@@ -3787,6 +3661,7 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.component(_chenfengyuan_vue_carousel_
   data: function data() {
     return {
       cart: [],
+      products: [],
       quantity: 1,
       total_price: 0,
       length: 0,
@@ -3794,10 +3669,14 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.component(_chenfengyuan_vue_carousel_
       data: ['<div class=""><img src="frontend/img/bg.jpg" /></div>', '<div class=""><img src="frontend/img/bg-2.jpg" /></div>']
     };
   },
-  computed: {},
+  computed: {
+    money: function money() {
+      return this.$store.getters.getMoney;
+    }
+  },
   mounted: function mounted() {
-    var self = this;
-    self.getCart();
+    this.getCart();
+    this.getFeatureProduct();
   },
   created: function created() {},
   methods: {
@@ -3806,6 +3685,15 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.component(_chenfengyuan_vue_carousel_
       axios.get("api/v1/cart").then(function (response) {
         self.cart = response.data.cart;
         self.$store.commit("updateCart", self.cart);
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    getFeatureProduct: function getFeatureProduct() {
+      var self = this;
+      axios.get("api/v1/feature").then(function (response) {
+        self.products = response.data;
+        console.log(response);
       })["catch"](function (error) {
         console.log(error);
       });
@@ -3828,7 +3716,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vue_google_signin_button__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-google-signin-button */ "./node_modules/vue-google-signin-button/dist/vue-google-signin-button.min.js");
 /* harmony import */ var vue_google_signin_button__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_google_signin_button__WEBPACK_IMPORTED_MODULE_1__);
-//
 //
 //
 //
@@ -3990,7 +3877,7 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_google_signin_button__WEBPACK
     loginGoogle: function loginGoogle(id, email, name) {
       var self = this;
       axios.post("api/v1/googleLogin", {
-        customer_id: id,
+        id: id,
         email: email,
         name: name
       }).then(function (response) {
@@ -5007,7 +4894,8 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.component("size", _Size__WEBPACK_IMPO
   },
   mounted: function mounted() {
     var self = this;
-    self.getCart(); // if (this.$route.params.keyword == "all") {
+    self.getCart(); //console.log(this.$store.getters.getSearchProduct);
+    // if (this.$route.params.keyword == "all") {
     //   axios
     //     .get("api/v1/search")
     //     .then(function(response) {
@@ -5268,6 +5156,7 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuelidate__WEBPACK_IMPORTED_MODUL
           address: self.address,
           birthday: self.birthday
         }).then(function (response) {
+          self.$store.commit("updateToken", response.data.token);
           var r = confirm("Register successfully!");
 
           if (r == true) {
@@ -5337,7 +5226,7 @@ __webpack_require__.r(__webpack_exports__);
           size: self.$store.getters.getSizeSearch
         }
       }).then(function (response) {
-        console.log(response);
+        console.log(response.data);
         self.$store.commit("updateSearchProduct", response.data);
         self.$store.commit("updateStringSearch", self.searchString);
 
@@ -23872,7 +23761,22 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _vm._m(0),
+    _c("div", { staticClass: "page-top-info" }, [
+      _c("div", { staticClass: "container" }, [
+        _c("h4", [_vm._v("Your cart")]),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "site-pagination" },
+          [
+            _c("router-link", { attrs: { to: "/" } }, [_vm._v("Home/")]),
+            _vm._v(" "),
+            _c("a", [_vm._v("Your cart")])
+          ],
+          1
+        )
+      ])
+    ]),
     _vm._v(" "),
     _c("section", { staticClass: "cart-section spad" }, [
       _c("div", { staticClass: "container" }, [
@@ -23917,7 +23821,7 @@ var render = function() {
               _vm._v(" "),
               _c("div", { staticClass: "cart-table-warp" }, [
                 _c("table", [
-                  _vm._m(1),
+                  _vm._m(0),
                   _vm._v(" "),
                   _c(
                     "tbody",
@@ -24038,16 +23942,13 @@ var render = function() {
             "div",
             { staticClass: "col-lg-4 card-right" },
             [
-              _vm._m(2),
-              _vm._v(" "),
               _c(
-                "router-link",
+                "a",
                 {
                   staticClass: "site-btn",
-                  attrs: { to: "/checkout" },
                   on: {
                     click: function($event) {
-                      return _vm.getCart()
+                      return _vm.redirectToCheckOut()
                     }
                   }
                 },
@@ -24080,22 +23981,6 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "page-top-info" }, [
-      _c("div", { staticClass: "container" }, [
-        _c("h4", [_vm._v("Your cart")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "site-pagination" }, [
-          _c("a", { attrs: { href: "" } }, [_vm._v("Home")]),
-          _vm._v(" /\n        "),
-          _c("a", { attrs: { href: "" } }, [_vm._v("Your cart")])
-        ])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
         _c("th", { staticClass: "product-th" }, [_vm._v("Product")]),
@@ -24106,16 +23991,6 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", { staticClass: "total-th" }, [_vm._v("Price")])
       ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("form", { staticClass: "promo-code-form" }, [
-      _c("input", { attrs: { type: "text", placeholder: "Enter promo code" } }),
-      _vm._v(" "),
-      _c("button", [_vm._v("Submit")])
     ])
   }
 ]
@@ -24590,13 +24465,6 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("ul", { staticClass: "payment-list" }, [
-      _c("li", [
-        _vm._v("\n                Paypal\n                "),
-        _c("a", { attrs: { href: "#" } }, [
-          _c("img", { attrs: { src: "frontend/img/paypal.png", alt: "" } })
-        ])
-      ]),
-      _vm._v(" "),
       _c("li", [_vm._v("Pay when you get the package")])
     ])
   }
@@ -24885,7 +24753,61 @@ var render = function() {
     _vm._v(" "),
     _vm._m(0),
     _vm._v(" "),
-    _vm._m(1),
+    _c("section", { staticClass: "product-filter-section" }, [
+      _c("div", { staticClass: "container" }, [
+        _vm._m(1),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "row" },
+          _vm._l(_vm.products, function(product) {
+            return _c(
+              "div",
+              { key: product.id, staticClass: "col-lg-3 col-sm-6" },
+              [
+                _c("div", { staticClass: "product-item" }, [
+                  _c(
+                    "div",
+                    { staticClass: "pi-pic" },
+                    [
+                      _c(
+                        "router-link",
+                        {
+                          attrs: {
+                            to: {
+                              name: "product",
+                              params: { productId: product.id }
+                            }
+                          }
+                        },
+                        [
+                          _c("img", {
+                            staticClass: "standard-img",
+                            attrs: { src: product.image, alt: "" }
+                          })
+                        ]
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "pi-text" }, [
+                    _c("h6", [
+                      _vm._v(_vm._s(product.price) + " " + _vm._s(_vm.money))
+                    ]),
+                    _vm._v(" "),
+                    _c("p", [_vm._v(_vm._s(product.name))])
+                  ])
+                ])
+              ]
+            )
+          }),
+          0
+        ),
+        _vm._v(" "),
+        _c("div", { staticClass: "text-center pt-5" })
+      ])
+    ]),
     _vm._v(" "),
     _vm._m(2)
   ])
@@ -24941,268 +24863,11 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("section", { staticClass: "product-filter-section" }, [
-      _c("div", { staticClass: "container" }, [
-        _c(
-          "div",
-          {
-            staticClass: "section-title",
-            staticStyle: { "margin-top": "40px" }
-          },
-          [_c("h2", [_vm._v("BROWSE TOP SELLING PRODUCTS")])]
-        ),
-        _vm._v(" "),
-        _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col-lg-3 col-sm-6" }, [
-            _c("div", { staticClass: "product-item" }, [
-              _c("div", { staticClass: "pi-pic" }, [
-                _c("img", {
-                  attrs: { src: "frontend/img/product/5.jpg", alt: "" }
-                }),
-                _vm._v(" "),
-                _c("div", { staticClass: "pi-links" }, [
-                  _c("a", { staticClass: "add-card", attrs: { href: "#" } }, [
-                    _c("i", { staticClass: "flaticon-bag" }),
-                    _vm._v(" "),
-                    _c("span", [_vm._v("ADD TO CART")])
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "a",
-                    { staticClass: "wishlist-btn", attrs: { href: "#" } },
-                    [_c("i", { staticClass: "flaticon-heart" })]
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "pi-text" }, [
-                _c("h6", [_vm._v("$35,00")]),
-                _vm._v(" "),
-                _c("p", [_vm._v("Flamboyant Pink Top")])
-              ])
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-lg-3 col-sm-6" }, [
-            _c("div", { staticClass: "product-item" }, [
-              _c("div", { staticClass: "pi-pic" }, [
-                _c("div", { staticClass: "tag-sale" }, [_vm._v("ON SALE")]),
-                _vm._v(" "),
-                _c("img", {
-                  attrs: { src: "frontend/img/product/6.jpg", alt: "" }
-                }),
-                _vm._v(" "),
-                _c("div", { staticClass: "pi-links" }, [
-                  _c("a", { staticClass: "add-card", attrs: { href: "#" } }, [
-                    _c("i", { staticClass: "flaticon-bag" }),
-                    _vm._v(" "),
-                    _c("span", [_vm._v("ADD TO CART")])
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "a",
-                    { staticClass: "wishlist-btn", attrs: { href: "#" } },
-                    [_c("i", { staticClass: "flaticon-heart" })]
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "pi-text" }, [
-                _c("h6", [_vm._v("$35,00")]),
-                _vm._v(" "),
-                _c("p", [_vm._v("Black and White Stripes Dress")])
-              ])
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-lg-3 col-sm-6" }, [
-            _c("div", { staticClass: "product-item" }, [
-              _c("div", { staticClass: "pi-pic" }, [
-                _c("img", {
-                  attrs: { src: "frontend/img/product/7.jpg", alt: "" }
-                }),
-                _vm._v(" "),
-                _c("div", { staticClass: "pi-links" }, [
-                  _c("a", { staticClass: "add-card", attrs: { href: "#" } }, [
-                    _c("i", { staticClass: "flaticon-bag" }),
-                    _vm._v(" "),
-                    _c("span", [_vm._v("ADD TO CART")])
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "a",
-                    { staticClass: "wishlist-btn", attrs: { href: "#" } },
-                    [_c("i", { staticClass: "flaticon-heart" })]
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "pi-text" }, [
-                _c("h6", [_vm._v("$35,00")]),
-                _vm._v(" "),
-                _c("p", [_vm._v("Flamboyant Pink Top")])
-              ])
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-lg-3 col-sm-6" }, [
-            _c("div", { staticClass: "product-item" }, [
-              _c("div", { staticClass: "pi-pic" }, [
-                _c("img", {
-                  attrs: { src: "frontend/img/product/8.jpg", alt: "" }
-                }),
-                _vm._v(" "),
-                _c("div", { staticClass: "pi-links" }, [
-                  _c("a", { staticClass: "add-card", attrs: { href: "#" } }, [
-                    _c("i", { staticClass: "flaticon-bag" }),
-                    _vm._v(" "),
-                    _c("span", [_vm._v("ADD TO CART")])
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "a",
-                    { staticClass: "wishlist-btn", attrs: { href: "#" } },
-                    [_c("i", { staticClass: "flaticon-heart" })]
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "pi-text" }, [
-                _c("h6", [_vm._v("$35,00")]),
-                _vm._v(" "),
-                _c("p", [_vm._v("Flamboyant Pink Top")])
-              ])
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-lg-3 col-sm-6" }, [
-            _c("div", { staticClass: "product-item" }, [
-              _c("div", { staticClass: "pi-pic" }, [
-                _c("img", {
-                  attrs: { src: "frontend/img/product/9.jpg", alt: "" }
-                }),
-                _vm._v(" "),
-                _c("div", { staticClass: "pi-links" }, [
-                  _c("a", { staticClass: "add-card", attrs: { href: "#" } }, [
-                    _c("i", { staticClass: "flaticon-bag" }),
-                    _vm._v(" "),
-                    _c("span", [_vm._v("ADD TO CART")])
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "a",
-                    { staticClass: "wishlist-btn", attrs: { href: "#" } },
-                    [_c("i", { staticClass: "flaticon-heart" })]
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "pi-text" }, [
-                _c("h6", [_vm._v("$35,00")]),
-                _vm._v(" "),
-                _c("p", [_vm._v("Flamboyant Pink Top")])
-              ])
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-lg-3 col-sm-6" }, [
-            _c("div", { staticClass: "product-item" }, [
-              _c("div", { staticClass: "pi-pic" }, [
-                _c("img", {
-                  attrs: { src: "frontend/img/product/10.jpg", alt: "" }
-                }),
-                _vm._v(" "),
-                _c("div", { staticClass: "pi-links" }, [
-                  _c("a", { staticClass: "add-card", attrs: { href: "#" } }, [
-                    _c("i", { staticClass: "flaticon-bag" }),
-                    _vm._v(" "),
-                    _c("span", [_vm._v("ADD TO CART")])
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "a",
-                    { staticClass: "wishlist-btn", attrs: { href: "#" } },
-                    [_c("i", { staticClass: "flaticon-heart" })]
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "pi-text" }, [
-                _c("h6", [_vm._v("$35,00")]),
-                _vm._v(" "),
-                _c("p", [_vm._v("Black and White Stripes Dress")])
-              ])
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-lg-3 col-sm-6" }, [
-            _c("div", { staticClass: "product-item" }, [
-              _c("div", { staticClass: "pi-pic" }, [
-                _c("img", {
-                  attrs: { src: "frontend/img/product/11.jpg", alt: "" }
-                }),
-                _vm._v(" "),
-                _c("div", { staticClass: "pi-links" }, [
-                  _c("a", { staticClass: "add-card", attrs: { href: "#" } }, [
-                    _c("i", { staticClass: "flaticon-bag" }),
-                    _vm._v(" "),
-                    _c("span", [_vm._v("ADD TO CART")])
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "a",
-                    { staticClass: "wishlist-btn", attrs: { href: "#" } },
-                    [_c("i", { staticClass: "flaticon-heart" })]
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "pi-text" }, [
-                _c("h6", [_vm._v("$35,00")]),
-                _vm._v(" "),
-                _c("p", [_vm._v("Flamboyant Pink Top")])
-              ])
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-lg-3 col-sm-6" }, [
-            _c("div", { staticClass: "product-item" }, [
-              _c("div", { staticClass: "pi-pic" }, [
-                _c("img", {
-                  attrs: { src: "frontend/img/product/12.jpg", alt: "" }
-                }),
-                _vm._v(" "),
-                _c("div", { staticClass: "pi-links" }, [
-                  _c("a", { staticClass: "add-card", attrs: { href: "#" } }, [
-                    _c("i", { staticClass: "flaticon-bag" }),
-                    _vm._v(" "),
-                    _c("span", [_vm._v("ADD TO CART")])
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "a",
-                    { staticClass: "wishlist-btn", attrs: { href: "#" } },
-                    [_c("i", { staticClass: "flaticon-heart" })]
-                  )
-                ])
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "pi-text" }, [
-                _c("h6", [_vm._v("$35,00")]),
-                _vm._v(" "),
-                _c("p", [_vm._v("Flamboyant Pink Top")])
-              ])
-            ])
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "text-center pt-5" }, [
-          _c("button", { staticClass: "site-btn sb-line sb-dark" }, [
-            _vm._v("LOAD MORE")
-          ])
-        ])
-      ])
-    ])
+    return _c(
+      "div",
+      { staticClass: "section-title", staticStyle: { "margin-top": "40px" } },
+      [_c("h2", [_vm._v("BROWSE TOP SELLING PRODUCTS")])]
+    )
   },
   function() {
     var _vm = this
@@ -25449,8 +25114,6 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticStyle: { "margin-top": "20px" } }, [
-      _c("a", { attrs: { href: "#" } }, [_vm._v("Forgot Password?")]),
-      _vm._v(" "),
       _c("label", [_vm._v("Or Sign in with")])
     ])
   }
@@ -25695,7 +25358,16 @@ var render = function() {
   return _c("div", [
     _c("section", { staticClass: "product-section" }, [
       _c("div", { staticClass: "container" }, [
-        _vm._m(0),
+        _c(
+          "div",
+          { staticClass: "back-link" },
+          [
+            _c("router-link", { attrs: { to: "/products" } }, [
+              _vm._v("Back to Category")
+            ])
+          ],
+          1
+        ),
         _vm._v(" "),
         _c("div", { staticClass: "row" }, [
           _c("div", { staticClass: "col-lg-6" }, [
@@ -25788,7 +25460,7 @@ var render = function() {
               _c("span", [_vm._v(_vm._s(_vm.current_amount) + " products")])
             ]),
             _vm._v(" "),
-            _vm._m(1),
+            _vm._m(0),
             _vm._v(" "),
             _c("div", { staticClass: "fw-size-choose" }, [
               _c("p", [_vm._v("Color")]),
@@ -25921,9 +25593,9 @@ var render = function() {
               [_vm._v("SHOP NOW")]
             ),
             _vm._v(" "),
-            _vm._m(2),
+            _vm._m(1),
             _vm._v(" "),
-            _vm._m(3)
+            _vm._m(2)
           ])
         ])
       ])
@@ -25931,16 +25603,6 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "back-link" }, [
-      _c("a", { attrs: { href: "./category.html" } }, [
-        _vm._v("<< Back to Category")
-      ])
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -26172,7 +25834,22 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _vm._m(0),
+    _c("div", { staticClass: "page-top-info" }, [
+      _c("div", { staticClass: "container" }, [
+        _c("h4", [_vm._v("CAtegory PAge")]),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "site-pagination" },
+          [
+            _c("router-link", { attrs: { to: "/" } }, [_vm._v("Home/")]),
+            _vm._v(" "),
+            _c("a", [_vm._v("Products")])
+          ],
+          1
+        )
+      ])
+    ]),
     _vm._v(" "),
     _c("section", { staticClass: "category-section spad" }, [
       _c("div", { staticClass: "container" }, [
@@ -26244,7 +25921,7 @@ var render = function() {
                     )
                   }),
                   _vm._v(" "),
-                  _vm._m(1)
+                  _c("div", { staticClass: "text-center w-100 pt-3" })
                 ],
                 2
               )
@@ -26255,35 +25932,7 @@ var render = function() {
     ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "page-top-info" }, [
-      _c("div", { staticClass: "container" }, [
-        _c("h4", [_vm._v("CAtegory PAge")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "site-pagination" }, [
-          _c("a", { attrs: { href: "" } }, [_vm._v("Home")]),
-          _vm._v(" /\n        "),
-          _c("a", { attrs: { href: "" } }, [_vm._v("Shop")]),
-          _vm._v(" /\n      ")
-        ])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "text-center w-100 pt-3" }, [
-      _c("button", { staticClass: "site-btn sb-line sb-dark" }, [
-        _vm._v("LOAD MORE")
-      ])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -44913,6 +44562,7 @@ var routes = [{
   component: _components_Cart__WEBPACK_IMPORTED_MODULE_5__["default"]
 }, {
   path: "/checkout",
+  name: "checkout",
   component: _components_CheckOut__WEBPACK_IMPORTED_MODULE_10__["default"]
 }, {
   path: "/login",
@@ -46095,7 +45745,7 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
     getSearchProduct: function getSearchProduct(state) {
       return state.search_product;
     },
-    getStringSearch: function getStringSearch(state) {
+    getSearchString: function getSearchString(state) {
       return state.search_string;
     },
     getCategorySearch: function getCategorySearch(state) {

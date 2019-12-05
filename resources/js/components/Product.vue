@@ -4,7 +4,7 @@
     <section class="product-section">
       <div class="container">
         <div class="back-link">
-          <a href="./category.html">&lt;&lt; Back to Category</a>
+          <router-link to="/products">Back to Category</router-link>
         </div>
         <div class="row">
           <div class="col-lg-6">

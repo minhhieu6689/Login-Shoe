@@ -5,8 +5,8 @@
       <div class="container">
         <h4>Your cart</h4>
         <div class="site-pagination">
-          <a href>Home</a> /
-          <a href>Your cart</a>
+          <router-link to="/">Home/</router-link>
+          <a>Your cart</a>
         </div>
       </div>
     </div>
@@ -91,11 +91,11 @@
             </div>
           </div>
           <div class="col-lg-4 card-right">
-            <form class="promo-code-form">
+            <!-- <form class="promo-code-form">
               <input type="text" placeholder="Enter promo code" />
               <button>Submit</button>
-            </form>
-            <router-link to="/checkout" class="site-btn" v-on:click="getCart()">Proceed to checkout</router-link>
+            </form> -->
+            <a class="site-btn" v-on:click="redirectToCheckOut()">Proceed to checkout</a>
             <router-link
               to="/products"
               class="site-btn sb-dark"
@@ -145,7 +145,7 @@ export default {
       var self = this;
       action === 1 ? self.cart[index].quantity++ : self.cart[index].quantity--;
       self.cart[index].product_detail.sub_price =
-        self.cart[index].quantity * self.cart[index].product_detail.price;
+        self.cart[index].quantity * self.cart[index].price;
       const token = self.$store.state.token;
 
       axios
@@ -198,6 +198,18 @@ export default {
     },
     closeAlert() {
       this.is_hidden = true;
+    },
+    redirectToCheckOut(){
+      this.getCart();
+      if(this.cart.length != 0){
+         this.$router.push("checkout");
+      }
+      else{
+        var r = confirm("There is no item in your cart. Click ok to back to home page and buy items!");
+          if (r == true) {
+            this.$router.push("/");
+          }
+      }
     }
   }
 };

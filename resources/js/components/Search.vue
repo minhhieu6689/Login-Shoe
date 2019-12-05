@@ -36,7 +36,7 @@ export default {
           }
         })
         .then(function(response) {
-          console.log(response);
+          console.log(response.data);
           self.$store.commit("updateSearchProduct", response.data);
           self.$store.commit("updateStringSearch", self.searchString);
           if (self.$route.name != "products") {

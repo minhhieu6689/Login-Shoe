@@ -200,6 +200,7 @@ export default {
           birthday: self.birthday
         })
         .then(function(response) {
+          self.$store.commit("updateToken", response.data.token);
           var r = confirm("Register successfully!");
           if (r == true) {
             self.$router.push("/");

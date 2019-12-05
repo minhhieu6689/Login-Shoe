@@ -61,7 +61,6 @@ export default {
       var self = this;
       self.is_hidden_category = false;
       self.category_name = name;
-      let search_string = self.$store.getters.getSearchString;
       axios
         .get("api/v1/search", {
           params: {

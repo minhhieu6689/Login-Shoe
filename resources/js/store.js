@@ -55,10 +55,9 @@ export default new Vuex.Store({
             return state.search_product;
         },
 
-        getStringSearch(state){
+        getSearchString(state){
             return state.search_string;
         },
-
 
         getCategorySearch(state){
             return state.id_category;

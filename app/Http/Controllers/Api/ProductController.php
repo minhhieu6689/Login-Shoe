@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\ProductDetail;
+use App\Models\ProductImage;
 
 class ProductController extends Controller
 {
@@ -52,6 +53,17 @@ class ProductController extends Controller
     {
         $products = Product::with('product_details')->with('product_images')->findOrFail($id);
         return response()->json($products, 200);
+    }
+
+    public function feature()
+    {
+        $products = Product::where('is_feature',1)->get();
+        foreach($products as $product){
+            $productImage = ProductImage::where('product_id',$product->id)->where('is_avatar',1)->first();
+            $product->image = $productImage->image;
+        }   
+        
+        return response()->json($products,200);
     }
 
     public function search(Request $request)

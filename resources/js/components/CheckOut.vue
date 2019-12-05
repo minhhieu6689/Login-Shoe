@@ -99,12 +99,12 @@
               </div>
               <div class="cf-title">Payment</div>
               <ul class="payment-list">
-                <li>
+                <!-- <li>
                   Paypal
                   <a href="#">
                     <img src="frontend/img/paypal.png" alt />
                   </a>
-                </li>
+                </li> -->
                 <li>Pay when you get the package</li>
               </ul>
               <div id="paypal-button-container"></div>
@@ -188,7 +188,7 @@ export default {
   mounted() {
     this.getCart();
     this.getCurrentCustomer();
-    this.total = self.total_price;
+    this.total = this.$store.getters.getTotalPrice;
   },
 
   created() {},
@@ -250,7 +250,6 @@ export default {
 
     placeOrder() {
       var self = this;
-
       axios
         .post("api/v1/cart_order", {
           name: self.name,

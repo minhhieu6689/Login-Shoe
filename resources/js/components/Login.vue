@@ -72,7 +72,6 @@
                   v-on:click="Login()"
                 >SIGN IN</button>
                 <div style="margin-top: 20px">
-                  <a href="#">Forgot Password?</a>
                   <label>Or Sign in with</label>
                 </div>
               </div>
@@ -167,7 +166,7 @@ export default {
       var self = this;
       axios
         .post("api/v1/googleLogin", {
-          customer_id: id,
+          id: id,
           email: email,
           name: name,
         })

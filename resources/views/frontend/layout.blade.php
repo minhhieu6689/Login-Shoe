@@ -43,7 +43,7 @@
         <div class="loader"></div>
     </div>
 
-    <div id="app">
+    <nav id="app">
         <!-- Header section -->
         <header class="header-section">
             <div class="header-top">
@@ -68,17 +68,17 @@
                     <!-- menu -->
                     <ul class="main-menu">
                         <li>
-                            <router-link to="/">Home</router-link>
+                            <router-link to="/"></router-link>
                         </li>
-                        <li><a href="#">Women</a></li>
+                        <!-- <li><a href="#">Women</a></li>
                         <li><a href="#">Men</a></li>
                         <li><a href="#">Jewelry
                                 <span class="new">New</span>
-                            </a></li>
-                        <li>
+                            </a></li> -->
+                        <!-- <li>
                             <router-link to="/products">Products</router-link>
-                        </li>
-                        <li><a href="#">Pages</a>
+                        </li> -->
+                        <!-- <li><a href="#">Pages</a>
                             <ul class="sub-menu">
                                 <li><a href="./product.html">Product Page</a></li>
                                 <li><a href="./category.html">Category Page</a></li>
@@ -87,7 +87,7 @@
                                 <li><a href="./contact.html">Contact Page</a></li>
                             </ul>
                         </li>
-                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Blog</a></li> -->
                     </ul>
                 </div>
             </nav>
@@ -95,7 +95,7 @@
 
         <!-- Header section end -->
         <router-view></router-view>
-    </div>
+    </nav>
 
     <!-- Footer section -->
     <section class="footer-section">

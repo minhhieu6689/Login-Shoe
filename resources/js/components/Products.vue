@@ -5,8 +5,8 @@
       <div class="container">
         <h4>CAtegory PAge</h4>
         <div class="site-pagination">
-          <a href>Home</a> /
-          <a href>Shop</a> /
+           <router-link to="/">Home/</router-link>
+          <a>Products</a>
         </div>
       </div>
     </div>
@@ -126,7 +126,7 @@
               </div>
 
               <div class="text-center w-100 pt-3">
-                <button class="site-btn sb-line sb-dark">LOAD MORE</button>
+                <!-- <button class="site-btn sb-line sb-dark">LOAD MORE</button> -->
               </div>
             </div>
           </div>
@@ -188,6 +188,7 @@ export default {
   mounted() {
     var self = this;
     self.getCart();
+    //console.log(this.$store.getters.getSearchProduct);
     // if (this.$route.params.keyword == "all") {
     //   axios
     //     .get("api/v1/search")

@@ -34,7 +34,7 @@ const routes = [
         })
     },
     { path: "/cart", component: Cart },
-    { path: "/checkout", component: CheckOut },
+    { path: "/checkout", name:"checkout", component: CheckOut },
     { path: "/login", component: Login },
     { path: "/register", component: Register }
 ];
